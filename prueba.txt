@@ -1,0 +1,3 @@
+CRC-2334,Daniel,Pérez,Jiménez,M,1990-04-22
+CRC-9237,Daniela,Jiménez,Pérez,F,1980-06-31
+CRC-3729,Pamela,Ramirez,Rodríguez,F,2000-01-21
