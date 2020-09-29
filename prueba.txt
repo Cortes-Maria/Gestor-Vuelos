@@ -1,7 +1,7 @@
-CRC-2334,Daniel,Pérez,Jiménez,M,19d0-04-22
-CRC-9237,Daniela,Jiménez,Pérez,F,1980-2d-31
-CRC-3729,Pamela,Ramirez,Rodríguez,Femenino,2000-01-2d
-CRC-9999,Francisco,Villalta,Gómez,M,194-07-12
-CRC-9999,Francisco,Villalta,Gómez,M,1964-037-12
-CRC-9999,Francisco,Villalta,Gómez,M,1964-07-2
-CRC-9999,Francisco,Villalta,Gómez,M,1964-07-12
+233414,Daniel0,Pérez,Jiménez,M,19d0-04-22
+9233715,Daniela,Jiménez4,Pérez,F,1980-2d-31
+37f924,Pamela,Ramirez,Rodrígu2ez,Femenino,2000-01-2d
+999952,Francisco,Villalta,Gómez,M,194-07-12
+099952,Francisco,Villalta,Gómez,M,1964-037-12
+999943,Francisco,Villalta,Gómez,M,1964-07-2
+999923,Francisco,Villalta,Gómez,M,1964-07-12
