@@ -1,0 +1,8 @@
+233414,'Daniel','Perez','Jimenez','M','1990-04-22'
+9233715,'Daniela','Jiménez','Pérez','F','1980-12-31'
+37f924,'Pamela','Ramirez','Rodrígu2ez','Femenino','2000-01-2d'
+999952,'Francisco','Villalta','Gómez','M','194-07-12'
+099952,'Francisco','Villalta','Gómez','M','1964-037-12'
+999943,'Francisco','Villalta','Gómez','M','1964-07-2'
+999923,'Francisco','Villalta','Gomez','M','1964-07-12'
+182959,'Daniela','Montenegro','Sanabria','F','1977-02-10'
