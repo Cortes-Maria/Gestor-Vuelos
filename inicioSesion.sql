@@ -52,3 +52,6 @@ select verificar_usuario('DaniM', '1234');
 select verificar_usuario('admin/mainAdmin', '4321');
 select verificar_usuario('admin/mainAdmin', '54321');
 select verificar_usuario('admin/mainAdmin2', '4321');
+
+-- DEJA SOLO LOS REGISTROS INGRESADOS MANUALMENTE
+delete from Cliente where pkCLiente != 274628 and pkCLiente != 182959;

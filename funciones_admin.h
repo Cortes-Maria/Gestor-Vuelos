@@ -49,11 +49,62 @@ int validar_datos(char* dato, int id){
     }
 }
 
+void generar_reporte(int linea, int ind, char nombre_archivo[100]){
+
+    FILE *archivo;
+    archivo = fopen(nombre_archivo, "a");
+    char linea_char[3];
+    sprintf(linea_char, "%d", linea);//convierte entero en char
+
+    fputs("Linea ", archivo);
+    if (linea < 10){
+        fputc('0', archivo);//para mantener simetría
+    }
+    fputs(linea_char, archivo);
+    fputs(": ", archivo);
+
+    if (ind == 0){
+        fputs("Incluido\n", archivo);
+    }
+    else if (ind == 1){
+        fputs("Error\n", archivo);
+    }
+    else {
+        fputs("Repetido\n", archivo);
+    }
+
+    fclose(archivo);
+
+
+
+    
+
+}
+
 void carga_usuarios(){
 
-    char nombre_archivo[] = "prueba.txt";//Tiene el nombre del archivo a abrir
+    char nombre_archivo[100];
+    printf("Ingrese la dirección del archivo: ");
+    scanf(" %[^\n]", nombre_archivo);
     FILE *archivo;//Puntero a el archivo .txt
     archivo = fopen(nombre_archivo, "r");//se abre el archivo
+
+    //Variables para sacar el nombre del archivo reporte
+    char *nombre;
+    char *extension;
+    //variables char por incompatibilidad de punteros
+    char nombre_char[100];
+    char extension_char[10];
+
+    nombre = strtok(nombre_archivo, ".");
+    extension = strtok(NULL, "");
+    
+    strcpy(nombre_char, nombre);//copiamos a variables estáticas
+    strcpy(extension_char, extension);//para poder usar strcat
+
+    strcat(nombre_char, "_reporte.");
+    strcat(nombre_char, extension_char);//nombre_char tiene el nombre del archivo reporte
+
 
 	char linea[100];//Guarda cada línea del .txt
     char *tok;//Guarda porciones de cada linea del .txt
@@ -81,27 +132,24 @@ void carga_usuarios(){
             //NOMBRE
             tok = strtok(NULL, ",");//Validamos que el nombre no tenga números
             if (validar_datos(tok, 2) == 1){
-                printf("Error de inserción en la linea: %d\n", contador);
                 contador ++;
-                //generar_reporte("ERROR");
+                generar_reporte(contador, 1, nombre_char);
                 continue;
             }
 
             //PRIMER APELLIDO
             tok = strtok(NULL, ",");
             if (validar_datos(tok, 2) == 1){
-                printf("Error de inserción en la linea: %d\n", contador);
                 contador ++;
-                //generar_reporte("ERROR");
+                generar_reporte(contador, 1, nombre_char);
                 continue;
             }
 
             //SEGUNDO APELLIDO
             tok = strtok(NULL, ",");
             if (validar_datos(tok, 2) == 1){
-                printf("Error de inserción en la linea: %d\n", contador);
                 contador ++;
-                //generar_reporte("ERROR");
+                generar_reporte(contador, 1, nombre_char);
                 continue;
             }
 
@@ -111,9 +159,8 @@ void carga_usuarios(){
             //FECHA DE NACIMIENTO
             tok = strtok(NULL, "\n");
             if (validar_datos(tok, 4) == 1){//VALIDA FORMATO DE FECHA
-                printf("Error de inserción en la linea: %d\n", contador);
                 contador ++;
-                //generar_reporte("ERROR");
+                generar_reporte(contador, 1, nombre_char);
                 continue;
             }
             //Si llega hasta aqui todos los datos validados en C están bien
@@ -124,13 +171,16 @@ void carga_usuarios(){
             strcat(query, ", 'A')");
             
             if (mysql_query(conn, query)) {//Ejecuta el query de insert
-                    fprintf(stderr, "%s en linea %d\n", mysql_error(conn), contador);
-		            //exit(1);
-                    //generar_reporte("ERROR");
+		            strcpy(tok, mysql_error(conn));
+                    tok = strtok(tok, " ");
+                    if (strcmp(tok, "Duplicate") == 0){//Verifica si el error fue por pasaporte repetido
+                        generar_reporte(contador, 2, nombre_char);
+                    }else{
+                        generar_reporte(contador, 1, nombre_char);
+                    }
             }
             else{
-                //generar_reporte("EXITO");
-                printf("Se insertó la linea #%d\n", contador);
+                generar_reporte(contador, 0, nombre_char);
             }
             contador ++;
         }
@@ -138,8 +188,4 @@ void carga_usuarios(){
     }
     mysql_close(conn);//se cierra la conexion con mySQL
     fclose(archivo);//se cierra el archivo
-}
-
-void generar_reporte(int ind, char desc[50]){
-
 }
