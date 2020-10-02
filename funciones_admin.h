@@ -132,24 +132,24 @@ void carga_usuarios(){
             //NOMBRE
             tok = strtok(NULL, ",");//Validamos que el nombre no tenga números
             if (validar_datos(tok, 2) == 1){
-                contador ++;
                 generar_reporte(contador, 1, nombre_char);
+                contador ++;
                 continue;
             }
 
             //PRIMER APELLIDO
             tok = strtok(NULL, ",");
             if (validar_datos(tok, 2) == 1){
-                contador ++;
                 generar_reporte(contador, 1, nombre_char);
+                contador ++;
                 continue;
             }
 
             //SEGUNDO APELLIDO
             tok = strtok(NULL, ",");
             if (validar_datos(tok, 2) == 1){
-                contador ++;
                 generar_reporte(contador, 1, nombre_char);
+                contador ++;
                 continue;
             }
 
@@ -159,8 +159,8 @@ void carga_usuarios(){
             //FECHA DE NACIMIENTO
             tok = strtok(NULL, "\n");
             if (validar_datos(tok, 4) == 1){//VALIDA FORMATO DE FECHA
-                contador ++;
                 generar_reporte(contador, 1, nombre_char);
+                contador ++;
                 continue;
             }
             //Si llega hasta aqui todos los datos validados en C están bien

@@ -1,9 +1,9 @@
 Linea 01: Incluido
 Linea 02: Incluido
 Linea 03: Error
+Linea 04: Error
 Linea 05: Error
 Linea 06: Error
-Linea 07: Error
 Linea 07: Incluido
 Linea 08: Repetido
 Linea 09: Error
