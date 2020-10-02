@@ -1,5 +1,9 @@
 #include <stdio.h>
-#include "sistema_vuelos.h"
+#include <mysql.h>
+#include <string.h>
+#include "sistemaVuelos.h"
+#include "funciones_admin.h"
+
 int main()
 {
     menu();
@@ -7,16 +11,14 @@ int main()
 }
 
 void menu(){
-    /*Esta función se remplazará cuando se pueda determinar el tipo de usuario 
-    mediante los datos ingresados*/
     int eleccion;
+    int tipo_usuario;
     
     do{
         printf("\n\tMenú Principal\n");
         printf( " _______________________________\n");
         printf( "|                               |\n");
-        printf( "| 1. Cuenta Admin               |\n");
-        printf( "| 2. Cuenta Cliente             |\n");
+        printf( "| 1. Iniciar sesión             |\n");
         printf( "| 0. Salir                      |\n" );
         printf( "._______________________________.\n");
         printf("\nIngrese su elección: ");
@@ -26,13 +28,17 @@ void menu(){
         switch (eleccion){
             
             case 1:
-                menu_admin();
-                break;
-            
-            case 2:
-                menu_cliente();
-                break;
-
+                tipo_usuario = iniciar_sesion();
+                if (tipo_usuario == 1){//Datos no existentes en la base de datps
+                    printf("Los datos que ingresó son erroneos\n");
+                }
+                else if (tipo_usuario == 2){//Usuario admin                    
+                    menu_admin();
+                }
+                else{//usuario cliente
+                    menu_cliente();
+                }
+                break;        
         }
     }while(eleccion != 0);
 }
@@ -61,7 +67,7 @@ void menu_admin()
                 break;
             
             case 2:
-                //Implementar función
+                carga_usuarios();
                 break;
             
             case 3:
