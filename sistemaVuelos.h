@@ -19,3 +19,13 @@ void menu();
     Salidas: Un 0 si el dato está correcto, 1 si no
     Funcionamiento: Valida que el dato recibido esté correcto.
 -----------------------------------------------------------------------*/
+/*
+struct cliente{
+    char pasaporte[10];
+    char nombre[35] = "'";
+    char apellido1[35] = "'";
+    char apellido2[35] = "'";
+    char sexo[5] = "'";
+    char fecha_nacimiento[15] = "'";
+} clientes[1];
+*/

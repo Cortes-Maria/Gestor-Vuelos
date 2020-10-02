@@ -29,7 +29,7 @@ void menu(){
             
             case 1:
                 tipo_usuario = iniciar_sesion();
-                if (tipo_usuario == 1){//Datos no existentes en la base de datps
+                if (tipo_usuario == 1){//Datos no existentes en la base de datos
                     printf("Los datos que ingresó son erroneos\n");
                 }
                 else if (tipo_usuario == 2){//Usuario admin                    
@@ -50,11 +50,11 @@ void menu_admin()
         printf("\n  Menú Administrador\n");
         printf( " _________________________\n");
         printf( "|                         |\n");
-        printf( "| 1.Registro de Aviones   |\n");
-        printf( "| 2.Carga de usuarios     |\n");
-        printf( "| 3.Estado de vuelo       |\n");
-        printf( "| 4.Estadísticas          |\n");
-        printf( "| 0.Salir                 |\n" );
+        printf( "| 1. Registro de Aviones  |\n");
+        printf( "| 2. Carga de usuarios    |\n");
+        printf( "| 3. Estado de vuelo      |\n");
+        printf( "| 4. Estadísticas         |\n");
+        printf( "| 0. Salir                |\n" );
         printf( "._________________________.\n");
         printf("\nIngrese su elección: ");
         scanf("%d", &eleccion);
