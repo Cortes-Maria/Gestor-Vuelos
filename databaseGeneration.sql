@@ -78,3 +78,8 @@ create table Operario (
     Usuario varchar(40),
     Contrasenna varchar(50)
 );
+
+create table Aerolinea (
+	nombre varchar(80),
+    NumHub int
+);
