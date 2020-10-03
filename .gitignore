@@ -11,3 +11,5 @@ CTestTestfile.cmake
 _deps
 
 .DS_Store
+
+conecta_mySQL.h
