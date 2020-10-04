@@ -123,3 +123,86 @@ int guardar_datos(char linea[80]){
     
     return 0;
 }
+
+void imprime_asientos(char idVuelo[4], MYSQL *conn){
+
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    char inicio_query[] = "select obtener_query_v(2, ";
+    char fila[4];//Guarda cada que haya cambio de fila en los asientos
+    char query[200];
+    
+    strcat(inicio_query, idVuelo);
+    strcat(inicio_query, ")");
+
+    //Solicitamos el query que ocupamos
+    conn = conexion_mySQL();
+    if (mysql_query(conn, inicio_query)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+		exit(1);
+	}
+	res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+    strcpy(query, row[0]);
+    mysql_free_result(res);
+
+    //Ahora si llamamos a la función que retorna los asientos
+    if (mysql_query(conn, query)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+		exit(1);
+	}
+    res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+
+    strcpy(fila, row[1]);
+    int max = 0;
+    int cont = 0;
+    //Este while determina cuantas columnas máximo tiene el avión
+    while (row != NULL){
+        if (strcmp(fila, row[1]) != 0){
+            strcpy(fila, row[1]);
+            if (cont > max){
+                max = cont;
+            }
+            cont = 0;
+        }
+        cont++;
+        row = mysql_fetch_row(res);
+    }
+    //Este while imprime las columnas
+    cont = 0;
+    printf("Columnas->");
+    while (cont < max){
+        if (cont == 0){
+            printf("\t%d", cont +1);
+        }else{
+            printf("\t\t%d", cont +1);
+        }
+        cont++;
+    }
+    printf("\n\n");
+    mysql_free_result(res);
+    //Este while imprime los asientos, hay que volver a hacer la consulta
+    if (mysql_query(conn, query)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+		exit(1);
+	}
+    res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+
+
+    strcpy(fila, row[1]);
+    printf("Fila #%s", fila);
+    while (row != NULL){
+        if (strcmp(fila, row[1]) != 0){
+            printf("\n\n");
+            strcpy(fila, row[1]);
+            printf("Fila #%s", fila);
+        }
+        printf("\t\t%s", row[0]);
+        row = mysql_fetch_row(res);
+    }
+    printf("\n\n");
+    mysql_free_result(res);
+}

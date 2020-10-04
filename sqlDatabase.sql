@@ -44,7 +44,7 @@ create table Ciudad (
     Codigo varchar(40)
 );
 
-use gestorVuelos;
+
 create table Vuelo (
 	pkVuelo int primary key not NULL,
     fkOrigen int,
@@ -57,6 +57,7 @@ create table Vuelo (
     foreign key (fkDestino) references Ciudad(pkCiudad),
     foreign key (fkAvion) references Avion(pkAvion)
 );
+
 create table Tarifa (
 	pkTarifa int primary key auto_increment not NULL,
     fkVuelo int,
@@ -68,7 +69,7 @@ create table Tarifa (
 create table Asiento (
 	pkAsiento int primary key auto_increment not NULL,
     fkVuelo int,
-    Tipo varchar(1),
+    Tipo varchar(2),
     Fila int,
     Columna int,
     Estado varchar(1),

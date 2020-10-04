@@ -1,14 +1,16 @@
 #include <stdio.h>
-#include <mysql.h>
 #include <string.h>
 #include "sistemaVuelos.h"
 #include "funciones_admin.h"
-#include "aviones.h"
-#include "estadisticas.h"
+
+//#include "funciones_cliente.h"
+
+
 
 int main()
 {
-    menu();
+    //menu();
+    estado_vuelo();
     return 0;
 }
 
@@ -73,7 +75,7 @@ void menu_admin()
                 break;
             
             case 3:
-                //Implementar función;
+                estado_vuelo();
                 break;
             
             case 4:
@@ -86,6 +88,7 @@ void menu_admin()
 void menu_cliente()
 {
     int eleccion;
+    char idReserva[4];
     do{
         printf("\n  Menú Cliente\n");
         printf( " __________________________\n");
@@ -105,7 +108,9 @@ void menu_cliente()
                 break;
             
             case 2:
-                //Implementar función
+                printf("Ingrese el código de su reserva: ");
+                scanf( "%s", idReserva);
+                consultar_reservacion(idReserva);
                 break;
         }
     }while(eleccion != 0);

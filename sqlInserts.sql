@@ -72,6 +72,8 @@ values (182959, 'Daniela', 'Montenegro', 'Sanabria', 'F', '1977-02-10', 'A');
 insert into CuentaCliente(fkCliente, Usuario, Contrasenna)
 values (182959, 'DaniM', 12345);
 
+insert into Cliente(pkCliente, Nombre, Apellido1, Apellido2, Sexo, FechaNacimiento, Edad)
+values (315391, 'María', 'Solorzano', 'Fernandez', 'M', '2018-12-11', 'I');
 -- Operario
 insert into Operario (pkOperario, Usuario, Contrasenna)
 values (312, 'mainAdmin', 4321);
@@ -102,6 +104,13 @@ insert into Tarifa (fkVuelo, Tipo, Precio) values (1, 'EI', 50);
 CALL inserta_asientos(1, 'E', 2, 5, 1);
 CALL inserta_asientos(1, 'S', 2, 5, 3);
 CALL inserta_asientos(1, 'B', 2, 5, 5);
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (1, 'BI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (1, 'SI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (1, 'EI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+select * from Asiento;
 
 -- Reserva ID: 1
 select * from Reserva;
@@ -115,9 +124,12 @@ update Asiento SET Estado = 'O' where pkAsiento = 27;
 update Asiento SET Estado = 'O' where pkAsiento = 28;
 update Asiento SET Estado = 'O' where pkAsiento = 15;
 
+select * from Asiento;
 -- Reserva ID: 2
 INSERT INTO Reserva (fkCliente, fkVuelo, fecha) VALUES (274628, 1, '2020-09-03 16:23:37');
-INSERT INTO ClienteXReserva VALUES (2, 274628, 7);
-INSERT INTO ClienteXReserva VALUES (2, 9233715, 6);
+INSERT INTO ClienteXReserva VALUES (2, 274628, 6);
+INSERT INTO ClienteXReserva VALUES (2, 9233715, 7);
+INSERT INTO ClienteXReserva VALUES (2, 315391, 33);
+select * from ClienteXReserva;
 update Asiento SET Estado = 'O' where pkAsiento = 6;
 update Asiento SET Estado = 'O' where pkAsiento = 7;
