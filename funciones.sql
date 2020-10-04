@@ -71,10 +71,17 @@ END
 DELIMITER //
 create procedure TOP3_MayorVenta()
 BEGIN
-	SELECT obtener_monto(Reserva.pkReserva) as Monto, Vuelo.pkVuelo
+	CREATE TEMPORARY TABLE datos
+	SELECT obtener_monto(Reserva.pkReserva) as Monto, Vuelo.pkVuelo AS vuelo
     FROM Reserva inner join Vuelo on Reserva.fkVuelo = Vuelo.pkVuelo
-    ORDER BY Monto ASC
+    ORDER BY Monto ASC;
+    
+    SELECT SUM(Monto) as monto, datos.vuelo
+    FROM datos inner join Vuelo on datos.vuelo = Vuelo.pkVuelo
+    group by datos.vuelo
+    ORDER BY monto ASC
     LIMIT 3;
+    
+    drop TEMPORARY TABLE datos;
 END
 //
-

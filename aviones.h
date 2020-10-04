@@ -62,7 +62,7 @@ char * escogerMarca() {
     }
     printf("Seleccione la marca de su preferencia:\n(Debe indicarlo con el número identificador):\n");
     char *marca = malloc(3);
-    scanf("%s", &marca);
+    scanf("%s", marca);
 
     mysql_free_result(res);
     mysql_close(conn);
@@ -95,7 +95,7 @@ char * escogerModelo(char *pMarca) {
     }
     printf("Seleccione el modelo de su preferencia.\n(Debe indicarlo con el número identificador): \n");
     char *modelo = malloc(4);
-    scanf("%s", &modelo);
+    scanf("%s", modelo);
 
 
     mysql_free_result(res);
@@ -103,7 +103,7 @@ char * escogerModelo(char *pMarca) {
     return modelo;
 }
 
-void incluirAvionMYSQL(char *año, char *modelo, char matricula[]) {
+void incluirAvionMYSQL(char *anno, char *modelo, char matricula[]) {
     MYSQL *conn = mysql_init(NULL);
     conn = conexion_mySQL();
     MYSQL_RES *res;
@@ -116,7 +116,7 @@ void incluirAvionMYSQL(char *año, char *modelo, char matricula[]) {
     strcat(q_insertarAvion, ",");
     strcat(q_insertarAvion, matricula);
     strcat(q_insertarAvion, ",");
-    strcat(q_insertarAvion, año);
+    strcat(q_insertarAvion, anno);
     strcat(q_insertarAvion, ")");
 
     if (mysql_query(conn, q_insertarAvion)) {//Ejecuta la función de la base de datos
@@ -142,7 +142,7 @@ void incluirAvionMYSQL(char *año, char *modelo, char matricula[]) {
 
 void incluirAvion () {
     char matricula[15];
-    char año[15];
+    char anno[15];
     
     printf("Matricula: ");
     scanf("%s", matricula);
@@ -150,11 +150,11 @@ void incluirAvion () {
     
     int existe = existeAvion(matricula);
     if (!existe){
-       printf("Año: ");
-       scanf("%s", año);
+       printf("anno: ");
+       scanf("%s", anno);
        char *marca = escogerMarca();
-       char *modelo = escogerModelo(&marca);
-       incluirAvionMYSQL(año,&modelo,matricula);
+       char *modelo = escogerModelo(marca);
+       incluirAvionMYSQL(anno,modelo,matricula);
        return;
     }
     else {

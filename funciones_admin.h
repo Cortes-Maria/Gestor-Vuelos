@@ -95,9 +95,7 @@ void estado_vuelo(){
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
 	MYSQL_ROW row;
-    char solicitar_query[150] = "select obtener_query_v(0, ";
-    char query[600];
-    
+    char solicitar_query[150] = "call info_general(";    
 
     char idVuelo[5];
     printf("Indique el código de vuelo: ");
@@ -113,17 +111,7 @@ void estado_vuelo(){
 	}
     res = mysql_use_result(conn);
     row = mysql_fetch_row(res);
-    strcpy(query, row[0]);
-    mysql_free_result(res);
 
-    //Traemos los datos generales del vuelo
-    if (mysql_query(conn, query)){
-		fprintf(stderr, "%s\n", mysql_error(conn));
-		exit(1);
-	}
-
-    res = mysql_use_result(conn);
-    row = mysql_fetch_row(res);
     //Imprimimos los datos generales del vuelo
     printf("\n\n\nCódigo de vuelo: %s\n", idVuelo);
     printf("Salió desde %s en la fecha y hora %s\n", row[0], row[1]);
@@ -136,27 +124,17 @@ void estado_vuelo(){
     imprime_asientos(idVuelo, conn);
     
     //Sacamos ahora la cantidad de asientos por tipo
-    strcpy(solicitar_query, "select obtener_query_v(1, ");
+    strcpy(solicitar_query, "call tipo_asientos(");
     strcat(solicitar_query, idVuelo);
     strcat(solicitar_query, ")");
-
+    conn = conexion_mySQL();
     //obtenemos la query de tipos de asiento
     if (mysql_query(conn, solicitar_query)){
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
 	}
     res = mysql_use_result(conn);
-    row = mysql_fetch_row(res);
-    strcpy(query, row[0]);
-    mysql_free_result(res);
-
-    //Traemos ahora los datos de los tipos de asientos
-    if (mysql_query(conn, query)){
-		fprintf(stderr, "%s\n", mysql_error(conn));
-		exit(1);
-	}
-
-    res = mysql_use_result(conn);
+   
     //Empezamos a imprimirlos
     printf("\nDe lo anterior podemos resumir\n");
 
@@ -165,24 +143,14 @@ void estado_vuelo(){
     }
 
     mysql_free_result(res);
-
+    mysql_close(conn);
     //Ahora sacamos la cantidad de infantes y adultos
-    strcpy(solicitar_query, "select obtener_query_v(3, ");
+    strcpy(solicitar_query, "call asiento_edades(");
     strcat(solicitar_query, idVuelo);
     strcat(solicitar_query, ")");
-
+    conn = conexion_mySQL();
     //obtenemos la query de tipos de asiento
     if (mysql_query(conn, solicitar_query)){
-		fprintf(stderr, "%s\n", mysql_error(conn));
-		exit(1);
-	}
-    res = mysql_use_result(conn);
-    row = mysql_fetch_row(res);
-    strcpy(query, row[0]);
-    mysql_free_result(res);
-
-    //Traemos ahora si los datos de los tipos de asientos
-    if (mysql_query(conn, query)){
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
 	}
@@ -194,13 +162,13 @@ void estado_vuelo(){
     printf("y %s infantes\n", row[1]);
     
     mysql_free_result(res);
-
+    mysql_close(conn);
     
     //Ahora imprimimos el detalle de las reservaciones
     //Para esto sacamos todas las reservas que esté en este vuelo
     strcpy(solicitar_query, "select r.pkReserva from Reserva r inner join Vuelo v on r.fkVuelo = ");
     strcat(solicitar_query, idVuelo);
-
+    conn = conexion_mySQL();
     if (mysql_query(conn, solicitar_query)){
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);

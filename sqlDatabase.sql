@@ -1,4 +1,3 @@
-
 create database gestorVuelos;
 use gestorVuelos;
 
@@ -43,7 +42,6 @@ create table Ciudad (
 	pkCiudad int primary key auto_increment not NULL,
     Codigo varchar(40)
 );
-
 
 create table Vuelo (
 	pkVuelo int primary key not NULL,
@@ -122,3 +120,5 @@ DROP TABLE CuentaCliente;
 DROP TABLE Cliente;
 DROP TABLE Operario;
 DROP TABLE Aerolinea;
+
+select * from Avion;
