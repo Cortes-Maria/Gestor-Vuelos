@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <mysql.h>
-#include "conecta_mySQL.h"
 #define EXISTE_AVION "select existeAvion("
 #define INSERTAR_AVION "select InsertarAvion("
 #define MOSTRAR_AVION "CALL verAvion("

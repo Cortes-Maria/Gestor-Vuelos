@@ -68,5 +68,13 @@ BEGIN
 END
 //
 
-
+DELIMITER //
+create procedure TOP3_MayorVenta()
+BEGIN
+	SELECT obtener_monto(Reserva.pkReserva) as Monto, Vuelo.pkVuelo
+    FROM Reserva inner join Vuelo on Reserva.fkVuelo = Vuelo.pkVuelo
+    ORDER BY Monto ASC
+    LIMIT 3;
+END
+//
 
