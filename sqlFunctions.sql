@@ -1,3 +1,4 @@
+use gestorVuelos;
 -- FUNCION PARA INICIAR SESION
 DELIMITER //
 CREATE FUNCTION verificar_usuario(v_usuario varchar(20), v_contrasenna varchar(30))
@@ -131,10 +132,12 @@ END
 
 
 -- DROPS
+
 DROP FUNCTION verificar_usuario;
 DROP FUNCTION obtener_monto;
 DROP PROCEDURE inserta_asientos;
 DROP FUNCTION obtener_query_r;
 DROP FUNCTION obtener_query_v;
+
 
 

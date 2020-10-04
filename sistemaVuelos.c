@@ -2,7 +2,9 @@
 #include <string.h>
 #include "sistemaVuelos.h"
 #include "funciones_admin.h"
+
 //#include "funciones_cliente.h"
+
 
 
 int main()
@@ -65,7 +67,7 @@ void menu_admin()
         switch (eleccion){
             
             case 1:
-                //Implementar función;
+                menuRegistrarAvion();
                 break;
             
             case 2:
