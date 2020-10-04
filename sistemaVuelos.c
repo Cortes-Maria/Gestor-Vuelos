@@ -4,6 +4,7 @@
 #include "sistemaVuelos.h"
 #include "funciones_admin.h"
 #include "aviones.h"
+#include "estadisticas.h"
 
 int main()
 {
