@@ -129,9 +129,8 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
     MYSQL_RES *res;
     MYSQL_ROW row;
 
-    char inicio_query[] = "select obtener_query_v(2, ";
+    char inicio_query[30] = "call obtener_asientos(";
     char fila[4];//Guarda cada que haya cambio de fila en los asientos
-    char query[200];
     
     strcat(inicio_query, idVuelo);
     strcat(inicio_query, ")");
@@ -143,16 +142,6 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
 		exit(1);
 	}
 	res = mysql_use_result(conn);
-    row = mysql_fetch_row(res);
-    strcpy(query, row[0]);
-    mysql_free_result(res);
-
-    //Ahora si llamamos a la función que retorna los asientos
-    if (mysql_query(conn, query)) {
-		fprintf(stderr, "%s\n", mysql_error(conn));
-		exit(1);
-	}
-    res = mysql_use_result(conn);
     row = mysql_fetch_row(res);
 
     strcpy(fila, row[1]);
@@ -170,6 +159,7 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
         cont++;
         row = mysql_fetch_row(res);
     }
+    mysql_free_result(res);
     //Este while imprime las columnas
     cont = 0;
     printf("Columnas->");
@@ -182,15 +172,17 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
         cont++;
     }
     printf("\n\n");
-    mysql_free_result(res);
+
+    mysql_close(conn);
+    conn = conexion_mySQL();
+
     //Este while imprime los asientos, hay que volver a hacer la consulta
-    if (mysql_query(conn, query)) {
+    if (mysql_query(conn, inicio_query)) {
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
 	}
     res = mysql_use_result(conn);
     row = mysql_fetch_row(res);
-
 
     strcpy(fila, row[1]);
     printf("Fila #%s", fila);

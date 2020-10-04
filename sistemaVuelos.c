@@ -2,13 +2,14 @@
 #include <string.h>
 #include "sistemaVuelos.h"
 #include "funciones_admin.h"
-//#include "funciones_cliente.h"
-
+#include "estadisticas.h"
+#include "aviones.h"
+#include "reserva.h"
 
 int main()
 {
+    reservar_vuelo();
     //menu();
-    estado_vuelo();
     return 0;
 }
 
@@ -65,7 +66,7 @@ void menu_admin()
         switch (eleccion){
             
             case 1:
-                //Implementar función;
+                menuRegistrarAvion();
                 break;
             
             case 2:
@@ -77,7 +78,7 @@ void menu_admin()
                 break;
             
             case 4:
-                //Implementar función;
+                menuEstadisticas();
                 break;
         }
     }while(eleccion != 0);
@@ -86,7 +87,7 @@ void menu_admin()
 void menu_cliente()
 {
     int eleccion;
-    char idReserva[4];
+    char idReserva[10];
     do{
         printf("\n  Menú Cliente\n");
         printf( " __________________________\n");
