@@ -85,3 +85,28 @@ BEGIN
     drop TEMPORARY TABLE datos;
 END
 //
+DELIMITER //
+CREATE FUNCTION personasXvuelo(idVuelo INT)
+RETURNS INT
+BEGIN
+		DECLARE personasVuelo INT;
+		SET personasVuelo = (select count(pkVuelo) from Vuelo v inner join 
+							Asiento a on a.fkVuelo = v.pkVuelo inner join 
+							ClienteXReserva cXr on cXr.fkAsiento = a.pkAsiento
+                            WHERE v.pkVuelo = idVuelo);
+		RETURN personasVuelo;
+END
+//
+
+DELIMITER //
+create procedure TOP3_MayorCantidad()
+BEGIN
+    
+    SELECT personasXvuelo(Vuelo.pkVuelo) as cantidad, Vuelo.pkVuelo as CodigoVuelo
+    FROM Vuelo
+    group by CodigoVuelo
+    ORDER BY cantidad ASC
+    LIMIT 3;
+    
+END
+//
