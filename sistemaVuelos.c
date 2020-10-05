@@ -8,8 +8,11 @@
 
 int main()
 {
-    reservar_vuelo();
-    //menu();
+    //reservar_vuelo();
+    //estado_vuelo();
+    //reservar_vuelo();
+    //menu_cliente();
+    menu();
     return 0;
 }
 
@@ -32,6 +35,8 @@ void menu(){
             
             case 1:
                 tipo_usuario = iniciar_sesion();
+                printf("%d", tipo_usuario);
+                //agregarReservacion();
                 if (tipo_usuario == 1){//Datos no existentes en la base de datos
                     printf("Los datos que ingresó son erroneos\n");
                 }
@@ -103,7 +108,7 @@ void menu_cliente()
         switch (eleccion){
             
             case 1:
-                //Implementar función;
+                reservar_vuelo();
                 break;
             
             case 2:

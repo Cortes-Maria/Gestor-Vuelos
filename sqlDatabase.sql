@@ -120,5 +120,3 @@ DROP TABLE CuentaCliente;
 DROP TABLE Cliente;
 DROP TABLE Operario;
 DROP TABLE Aerolinea;
-
-select * from Avion;

@@ -112,13 +112,11 @@ BEGIN
 		inner join Vuelo on fkVuelo = pkVuelo
 		where Tipo <> 'BI' and Tipo <> 'SI' and Tipo <> 'EI'and pkVuelo = idVuelo 
         group by concat(Tipo, Estado) order by Tipo;
-        
-	ELSEIF idQuery = 2 THEN -- Para imprimir asientos
+	ELSEIF idQuery = 2 THEN
 		select concat(Tipo, Estado) Asiento, fila, columna
 		from Asiento
 		where Tipo <> 'BI' and Tipo <> 'SI' and Tipo <> 'EI' and fkVuelo = idVuelo
 		order by fila, columna;
-		
 	ELSEIF idQuery = 3 THEN -- Indica cantidad de adultos e infantes por vuelo
 		select c.Edad, count(v.pkVuelo) Total
 		from Asiento a
@@ -142,7 +140,6 @@ BEGIN
 END
 //
 
--- info general de un vuelo
 DELIMITER //
 CREATE PROCEDURE info_general(idVuelo int)
 BEGIN
@@ -180,6 +177,7 @@ BEGIN
         group by c.Edad order by c.Edad;
 END
 //
+call asiento_edades(1);
 
 DELIMITER //
 CREATE FUNCTION existeReserva(idReserva int)
@@ -200,10 +198,15 @@ CREATE FUNCTION existeCliente(idCliente int)
 RETURNS int
 BEGIN
 	DECLARE cantCliente int DEFAULT 0;
-	SET cantCliente = (SELECT COUNT(c.pkCliente)
-	FROM Cliente c WHERE c.pkCliente= idCliente);
-	IF cantCliente > 0
-	THEN RETURN 1;
+    DECLARE v_edad varchar(2);
+	
+    SET cantCliente = (SELECT COUNT(c.pkCliente)
+					FROM Cliente c WHERE c.pkCliente= idCliente);
+	IF cantCliente > 0 THEN
+		IF (SELECT Edad FROM Cliente
+				WHERE pkCliente = idCliente) = 'A' THEN RETURN 1;
+        ELSE RETURN 2;
+		END IF;
     ELSE RETURN 0;
     END IF;
 END
@@ -230,5 +233,163 @@ DROP PROCEDURE inserta_asientos;
 DROP FUNCTION obtener_query_r;
 DROP FUNCTION obtener_query_v;
 
-select * from Cliente;
+DELIMITER //
+CREATE FUNCTION asiento_disponible(idVuelo int, v_fila int, v_columna int)
+RETURNS INT
+BEGIN
+	DECLARE dispAs int DEFAULT 0;
+    SET dispAs = (SELECT COUNT(a.pkAsiento)
+					FROM Asiento a WHERE a.fkVuelo = idVuelo
+					AND a.Fila = v_fila AND a.Columna = v_columna
+                    AND Estado = 'L');
+	IF dispAs > 0 THEN -- retorna el id del asiento
+		RETURN (SELECT a.pkAsiento FROM Asiento a WHERE a.fkVuelo = idVuelo
+					AND a.Fila = v_fila AND a.Columna = v_columna);
+	ELSE
+		RETURN 0;
+	END IF;
+END
+//
 
+DELIMITER //
+CREATE FUNCTION retornaIDAsiento(idVuelo int, tipoAsiento varchar(3))
+RETURNS int
+BEGIN 
+	DECLARE idAsiento int;
+    SET idAsiento = (SELECT pkAsiento from Asiento where fkVuelo = idVuelo and Tipo = tipoAsiento);
+	
+    RETURN idAsiento;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION crearReservacion(idCliente INT, idVuelo INT)
+RETURNS INT
+BEGIN
+	DECLARE idReserva INT;
+	INSERT INTO Reserva (fkCliente, fkVuelo, Fecha) VALUES (idCliente, idVuelo, (SELECT NOW()));
+    SET idReserva = (SELECT max(pkReserva) FROM Reserva WHERE fkCliente = idCliente and fkVuelo = idVuelo);
+    RETURN idReserva;
+END
+//
+    drop function crearReservacion;
+DELIMITER //
+CREATE PROCEDURE insertaClientesReserva(idReserva INT, idCliente INT, idAsiento INT)
+BEGIN
+	INSERT INTO ClienteXReserva VALUES (idReserva, idCliente, idAsiento);
+END
+//
+
+SELECT pkReserva FROM(
+	SELECT max(pkReserva) FROM Reserva WHERE fkCliente = 182959 and fkVuelo = 2;
+	ORDER BY pkReserva DESC;
+) WHERE ROWNUM = 1;
+
+
+DELIMITER //
+CREATE TRIGGER asientosOcupados
+AFTER INSERT ON ClienteXReserva
+FOR EACH ROW
+BEGIN
+	update Asiento 
+    SET Estado = 'O' where pkAsiento = new.fkAsiento;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION personasXvuelo(idVuelo INT)
+RETURNS INT
+BEGIN
+		DECLARE personasVuelo INT;
+		SET personasVuelo = (select count(pkVuelo) from Vuelo v inner join 
+							Asiento a on a.fkVuelo = v.pkVuelo inner join 
+							ClienteXReserva cXr on cXr.fkAsiento = a.pkAsiento
+                            WHERE v.pkVuelo = idVuelo);
+		RETURN personasVuelo;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION InsertarAvion(modelo int, matricula int, anno int)
+RETURNS int
+BEGIN	
+    insert into Avion (pkAvion, fkModelo, Anno)
+    values (matricula, modelo, anno);
+	RETURN 1;
+END
+//
+
+
+DELIMITER //
+CREATE FUNCTION existeAvion(matricula int)
+RETURNS int
+BEGIN
+	DECLARE cantAvion int DEFAULT 0;
+	SET cantAvion = (SELECT COUNT(Avion.pkAvion)
+	FROM Avion WHERE Avion.pkAvion = matricula);
+	IF cantAvion > 0
+	THEN RETURN 1;
+    ELSE RETURN 0;
+    END IF;
+END
+//
+
+
+
+DELIMITER //
+create procedure verAvion(matricula int)
+BEGIN
+	SELECT Avion.pkAvion, Modelo.descripcion, Marca.Descripcion
+    FROM Avion inner join Modelo on Avion.fkModelo = Modelo.pkModelo inner join Marca on Modelo.fkMarca = Marca.pkMarca
+    WHERE Avion.pkAvion = matricula;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION esAdulto(pkCliente int)
+RETURNS int
+BEGIN
+	DECLARE edad int DEFAULT 0;
+    SET edad =
+    (SELECT YEAR(CURDATE())-YEAR(Cliente.FechaNacimiento) + IF(DATE_FORMAT(CURDATE(),'%m-%d') > DATE_FORMAT(Cliente.FechaNacimiento,'%m-%d'), 0 , -1 ) 
+    FROM Cliente 
+    WHERE Cliente.pkCliente = pkCliente);
+
+	IF edad > 12
+	THEN RETURN 1;
+    ELSE RETURN 0;
+    END IF;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION AvionVuelo(matricula int)
+RETURNS int
+BEGIN
+	DECLARE cantAvion int DEFAULT 0;
+	SET cantAvion = (SELECT COUNT(Avion.pkAvion)
+	FROM Avion inner join Vuelo on Avion.pkAvion = Vuelo.fkAvion WHERE Avion.pkAvion = matricula);
+	IF cantAvion > 0
+	THEN RETURN 1;
+    ELSE RETURN 0;
+    END IF;
+END
+//
+
+DELIMITER //
+create procedure TOP3_MayorVenta()
+BEGIN
+	CREATE TEMPORARY TABLE datos
+	SELECT obtener_monto(Reserva.pkReserva) as Monto, Vuelo.pkVuelo AS vuelo
+    FROM Reserva inner join Vuelo on Reserva.fkVuelo = Vuelo.pkVuelo
+    ORDER BY Monto ASC;
+    
+    SELECT SUM(Monto) as monto, datos.vuelo
+    FROM datos inner join Vuelo on datos.vuelo = Vuelo.pkVuelo
+    group by datos.vuelo
+    ORDER BY monto ASC
+    LIMIT 3;
+    
+    drop TEMPORARY TABLE datos;
+END
+//
