@@ -1,7 +1,7 @@
 use gestorVuelos;
 -- FUNCION PARA INICIAR SESION
 DELIMITER //
-CREATE FUNCTION verificar_usuario(v_usuario varchar(20), v_contrasenna varchar(30))
+CREATE FUNCTION verificar_usuario(v_usuario varchar(20), v_contrasenna varchar(150))
 RETURNS INT
 BEGIN
 	DECLARE v_username varchar(20);
@@ -27,7 +27,6 @@ BEGIN
 	END IF;
 END
 //
-
 -- PROCEDIMIENTO QUE INSERTA ASIENTOS 
 DELIMITER // 
 CREATE PROCEDURE inserta_asientos(v_idVuelo int, v_tipo_asiento varchar(3), v_filas int, v_cantidad int, v_inicio_fila int)
@@ -355,13 +354,13 @@ BEGIN
     FROM Cliente 
     WHERE Cliente.pkCliente = pkCliente);
 
-	IF edad > 12
+	IF edad > 3
 	THEN RETURN 1;
     ELSE RETURN 0;
     END IF;
 END
 //
-
+drop function esAdulto;
 DELIMITER //
 CREATE FUNCTION AvionVuelo(matricula int)
 RETURNS int
@@ -393,3 +392,26 @@ BEGIN
     drop TEMPORARY TABLE datos;
 END
 //
+
+DELIMITER //
+CREATE PROCEDURE editarEdad(idCliente int)
+BEGIN
+	DECLARE v_edad int;
+    SET v_edad = (SELECT esAdulto(idCliente));
+    IF v_edad = 0 THEN
+		UPDATE Cliente
+			SET Edad = 'I' WHERE pkCliente = idCliente;
+	END IF;    
+END
+//
+drop procedure editarEdad;
+select * from Cliente;
+
+select MD5("4321");
+select * from Operario;
+update CuentaCliente
+set Contrasenna = MD5("1234") where fkCliente = 274628;
+
+select * from CuentaCliente;
+
+select verificar_usuario('admin/mainAdmin', MD5('4321'));

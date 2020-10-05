@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <mysql.h>
-#include "conecta_mySQL.h"
 #define TOP_VENTAS "CALL TOP3_MayorVenta()"
 #define TOP_CANT "CALL TOP3_MayorCantidad()"
 

@@ -82,7 +82,13 @@ void carga_usuarios(){
                 }
             }
             else{
-                generar_reporte(contador, 0, nombre_reporte);
+                generar_reporte(contador, 0, nombre_reporte);//Determinar si es Adulto o Infante
+                strcpy(query, "call editarEdad(");
+                strcat(query, clientes[0].dato);
+                strcat(query, ")");
+                if (mysql_query(conn, query)) {
+                    fprintf(stderr, "%s\n", mysql_error(conn));
+                }
             }
             contador ++;
         }

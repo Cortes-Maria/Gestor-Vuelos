@@ -1,12 +1,13 @@
-Linea 01: Incluido
-Linea 02: Incluido
+Linea 01: Repetido
+Linea 02: Repetido
 Linea 03: Error
 Linea 04: Error
 Linea 05: Error
 Linea 06: Error
-Linea 07: Incluido
+Linea 07: Repetido
 Linea 08: Repetido
 Linea 09: Error
 Linea 10: Error
-Linea 11: Incluido
+Linea 11: Repetido
 Linea 12: Repetido
+Linea 13: Incluido
