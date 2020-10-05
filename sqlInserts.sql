@@ -133,3 +133,34 @@ INSERT INTO ClienteXReserva VALUES (2, 315391, 33);
 select * from ClienteXReserva;
 update Asiento SET Estado = 'O' where pkAsiento = 6;
 update Asiento SET Estado = 'O' where pkAsiento = 7;
+
+-- VUELO 2
+INSERT INTO Avion VALUES (2, 10, 2015);
+INSERT INTO Ciudad (Codigo) VALUES ('ALA');
+INSERT INTO Ciudad (Codigo) VALUES ('CAR');
+
+INSERT INTO Vuelo (pkVuelo, fkOrigen, fkDestino, fkAvion, Salida, Llegada, TotalAsientos)
+VALUES (2, 3, 4, 2, '2020-11-20 07:00', '2020-11-20 15:00', 49);
+
+-- Tarifas
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'BA', 1500);
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'BI', 750);
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'SA', 1000);
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'SI', 500);
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'EA', 700);
+insert into Tarifa (fkVuelo, Tipo, Precio) values (2, 'EI', 350);
+
+-- Asientos
+-- PARA CREAR LOS ASIENTOS DEL VUELO, COMPILAR EL PROCEDIMIENTO INSERTA_ASIENTOS Y EJECUTAR LO SIGUIENTE
+CALL inserta_asientos(2, 'E', 4, 7, 1);
+CALL inserta_asientos(2, 'S', 2, 7, 5);
+CALL inserta_asientos(2, 'B', 1, 7, 7);
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (2, 'BI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (2, 'SI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
+	Values (2, 'EI', 0, 0, 'I'); -- Este asiento será 'ocupado' por todos los infantes
+    
+-- RESERVAS SE HACEN POR CONSOLA
+

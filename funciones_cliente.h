@@ -65,7 +65,7 @@ void consultar_reservacion(char idReserva[10]){
     row = mysql_fetch_row(res);
 
     printf("\nMonto total de la reservación: %s\n", row[0]);
-
+    mysql_free_result(res);
 	mysql_close(conn);
 }
 

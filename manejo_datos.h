@@ -197,4 +197,5 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
     }
     printf("\n\n");
     mysql_free_result(res);
+    mysql_close(conn);
 }

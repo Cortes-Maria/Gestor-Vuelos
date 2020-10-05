@@ -91,12 +91,37 @@ void carga_usuarios(){
     fclose(archivo);//se cierra el archivo
 }
 
+char *personasXvuelo(char idVuelo[10]){
+    MYSQL *conn = mysql_init(NULL);
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+    char *resultado; 
+    char query[50] = "select personasXvuelo(";
+    strcat(query, idVuelo);
+    strcat(query, ")");
+
+    conn = conexion_mySQL();
+    if (mysql_query(conn, query)) {
+		fprintf(stderr, "%s\n", mysql_error(conn));
+		exit(1);
+	}
+    res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+    resultado = malloc(6);
+    strcpy(resultado, row[0]);
+    mysql_free_result(res);
+    mysql_close(conn);
+    printf("Hay %s personas en total en este vuelo\n", resultado);
+    return resultado;
+    
+}
+
 void estado_vuelo(){
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
 	MYSQL_ROW row;
     char solicitar_query[150] = "call info_general(";    
-
+    char cantidadPersonas[4];
     char idVuelo[5];
     printf("Indique el código de vuelo: ");
     scanf(" %s", idVuelo);
@@ -141,9 +166,16 @@ void estado_vuelo(){
     while ((row = mysql_fetch_row(res)) != NULL){
         printf("Tipo de asiento: %s; Cantidad: %s\n", row[0], row[1]);
     }
-
     mysql_free_result(res);
     mysql_close(conn);
+    
+    strcpy(cantidadPersonas, personasXvuelo(idVuelo));
+
+    if (strcmp(cantidadPersonas, "0") == 0){
+        printf("No hay ninguna reservación asociada con este vuelo");
+        return;
+    }
+
     //Ahora sacamos la cantidad de infantes y adultos
     strcpy(solicitar_query, "call asiento_edades(");
     strcat(solicitar_query, idVuelo);
@@ -154,7 +186,6 @@ void estado_vuelo(){
 		fprintf(stderr, "%s\n", mysql_error(conn));
 		exit(1);
 	}
-
     res = mysql_use_result(conn);
     row = mysql_fetch_row(res);
     printf("\nEn este vuelo hay %s adultos ", row[1]);
