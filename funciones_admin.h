@@ -9,7 +9,12 @@
 
 
 void carga_usuarios(){
-
+    /*
+      Función encargada de realizar la carga de usuarios
+      E: N/A
+      S: N/A
+      R: N/A
+    */
     char nombre_archivo[50];
     printf("Ingrese la dirección del archivo: ");
     scanf(" %[^\n]", nombre_archivo);
@@ -98,6 +103,12 @@ void carga_usuarios(){
 }
 
 char *personasXvuelo(char idVuelo[10]){
+    /*
+      Función que determina la cantidad de personas que hay en un vuelo
+      E: recibe un char con el código del vuelo
+      S: retorna la cantidad de personas en un char
+      R: N/A
+    */ 
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
     MYSQL_ROW row;
@@ -123,6 +134,9 @@ char *personasXvuelo(char idVuelo[10]){
 }
 
 void estado_vuelo(){
+    /*
+      Función encargada de mostrar en pantalla el estado de un vuelo
+    */
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
 	MYSQL_ROW row;

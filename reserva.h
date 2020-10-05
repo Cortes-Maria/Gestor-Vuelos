@@ -24,6 +24,11 @@ void limpiar_struct(){
 }
 
 void agregarClientes(char idReservacion[5], int personas){
+    /* 
+      Función encargada de agregar personas a la tabla ClienteXReserva
+      E: el código de la reservación, la cantidad de personas en la reservación
+      S: N/A
+    */
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
     MYSQL_ROW row;
@@ -47,11 +52,19 @@ void agregarClientes(char idReservacion[5], int personas){
     }
     mysql_close(conn);
     limpiar_struct();
+    generar_PDF(idReservacion);
+    printf("\n\nSe realizó la reservación con éxito\n");
+    printf("El codigo de su reservación es: %s\n\n", idReservacion);
+
 }
 
 
 void agregarReservacion(int personas){
-    printf("HS)\n");
+    /*
+      Función que agrega una reservación a la tabla Reserva
+      E: un entero con la cantidad de personas en la reserva
+      S: N/A
+    */
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
     MYSQL_ROW row;
@@ -227,6 +240,9 @@ int verifica_pasaportes(char pasaportes[100], char vueloID[10]){
 }
 
 void reservar_vuelo(){
+    /*
+      Función encargada de reservar vuelos
+    */
     MYSQL *conn = mysql_init(NULL);
     MYSQL_RES *res;
 	MYSQL_ROW row;
@@ -310,6 +326,5 @@ void reservar_vuelo(){
 
     }
     agregarReservacion(resultado);
-    printf("\n\nSe realizó la reservación con éxito\n\n");
 }
 

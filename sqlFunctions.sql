@@ -76,6 +76,7 @@ BEGIN
 END
 //
 
+select obtener_monto(45);
 DELIMITER //
 CREATE PROCEDURE obtener_query_r(idReserva int)
 BEGIN
@@ -87,7 +88,7 @@ BEGIN
                     INNER JOIN Tarifa t ON v.pkVuelo = t.fkVuelo
 				where SUBSTRING(t.Tipo,1,1) = SUBSTRING(a.Tipo, 1, 1)
 				and SUBSTRING(t.Tipo, 2) = c.Edad
-                and cXr.fkReserva = idReserva;
+                and cXr.fkReserva = 2;idReserva;
 END
 //
     
@@ -176,7 +177,6 @@ BEGIN
         group by c.Edad order by c.Edad;
 END
 //
-call asiento_edades(1);
 
 DELIMITER //
 CREATE FUNCTION existeReserva(idReserva int)
@@ -224,14 +224,6 @@ BEGIN
 END
 //
 
--- DROPS
-
-DROP FUNCTION verificar_usuario;
-DROP FUNCTION obtener_monto;
-DROP PROCEDURE inserta_asientos;
-DROP FUNCTION obtener_query_r;
-DROP FUNCTION obtener_query_v;
-
 DELIMITER //
 CREATE FUNCTION asiento_disponible(idVuelo int, v_fila int, v_columna int)
 RETURNS INT
@@ -271,7 +263,7 @@ BEGIN
     RETURN idReserva;
 END
 //
-    drop function crearReservacion;
+
 DELIMITER //
 CREATE PROCEDURE insertaClientesReserva(idReserva INT, idCliente INT, idAsiento INT)
 BEGIN
@@ -360,7 +352,7 @@ BEGIN
     END IF;
 END
 //
-drop function esAdulto;
+
 DELIMITER //
 CREATE FUNCTION AvionVuelo(matricula int)
 RETURNS int
@@ -404,14 +396,95 @@ BEGIN
 	END IF;    
 END
 //
+
+DELIMITER //
+CREATE PROCEDURE eliminarReservacion(idReserva INT)
+BEGIN
+	DECLARE idAsiento int;
+    
+	DECLARE c1 CURSOR FOR select fkAsiento from ClienteXReserva cXr
+		inner join Asiento a on cXr.fkAsiento = a.pkAsiento
+		where SUBSTR(a.Tipo, 2, 2) != 'I'
+		and cXr.fkReserva = idReserva;
+        
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET @hecho = TRUE;
+
+    OPEN c1;
+    bucle: LOOP
+		FETCH c1 into idAsiento;
+        
+        IF @hecho THEN
+			LEAVE bucle;
+		END IF;
+        
+        UPDATE Asiento SET Estado = 'L' WHERE pkAsiento = idAsiento;
+        
+	END LOOP;
+    CLOSE c1;
+    
+    DELETE FROM ClienteXReserva WHERE fkReserva = idReserva;
+    DELETE FROM Reserva WHERE pkReserva = idReserva;
+END
+//
+
+DELIMITER //
+CREATE PROCEDURE obtenerReservacion(idReserva INT)
+BEGIN	
+	SELECT r.Fecha, v.pkVuelo, c1.Codigo, v.Salida, c2.Codigo, v.Llegada, 
+		(SELECT obtener_monto(idReserva)) Monto, ae.nombre, ae.NumHub, (SELECT obtenerAsientosReserv(idReserva)) Asientos
+	FROM Reserva r
+	INNER JOIN ClienteXReserva cXr on r.pkReserva = cXr.fkReserva
+    INNER JOIN Asiento a on cXr.fkAsiento = a.pkAsiento
+    INNER JOIN Vuelo v on a.fkVuelo = v.pkVuelo
+    INNER JOIN Ciudad c1 on c1.pkCiudad = v.fkOrigen
+    INNER JOIN Ciudad c2 on c2.pkCiudad = v.fkDestino
+    JOIN Aerolinea ae
+    WHERE r.pkReserva = idReserva;
+END
+//
+
+DELIMITER //
+CREATE FUNCTION obtenerAsientosReserv(idReserva INT)
+RETURNS INT
+BEGIN
+	DECLARE cantidadAsientos INT;
+    SET cantidadAsientos = ( SELECT COUNT(v.pkVuelo) 
+							 FROM ClienteXReserva cXr
+							 INNER JOIN Asiento a on cXr.fkAsiento = a.pkAsiento
+							 INNER JOIN Vuelo v on a.fkVuelo = v.pkVuelo
+							 WHERE cXr.fkReserva = idReserva
+							 AND SUBSTR(a.Tipo, 2, 2) != 'I');
+	RETURN cantidadAsientos;
+END
+//
+
+-- DROPS
+drop function asiento_disponible;
+drop function AvionVuelo;
+drop function crearReservacion;
+drop function esAdulto;
+drop function existeAvion;
+drop function existeCliente;
+drop function existeReserva;
+drop function existeVuelo;
+drop function insertanAvion;
+drop function obtenerAsientosReserv;
+drop function obtener_monto:
+drop function personasXvuelo;
+drop function retornaIDAsiento;
+drop function verificar_usuario;
+drop trigger asientosOcupados;
+drop procedure asiento_edades;
 drop procedure editarEdad;
-select * from Cliente;
-
-select MD5("4321");
-select * from Operario;
-update CuentaCliente
-set Contrasenna = MD5("1234") where fkCliente = 274628;
-
-select * from CuentaCliente;
-
-select verificar_usuario('admin/mainAdmin', MD5('4321'));
+drop procedure eliminarReservacion;
+drop procedure info_general;
+drop procedure inserta_asientos;
+drop procedure insertaClientesReserva;
+drop procedure obtener_asientos;
+drop procedure obtener_query_r;
+drop procedure obtener_query_v;
+drop procedure obtenerReservacion;
+drop procedure tipo_asientos;
+drop procedure TOP3_MayorCantidad;
+drop procedure TOP3_MayorVenta;
+drop procedure verAvion;

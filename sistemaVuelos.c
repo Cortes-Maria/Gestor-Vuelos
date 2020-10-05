@@ -8,10 +8,6 @@
 
 int main()
 {
-    //reservar_vuelo();
-    //estado_vuelo();
-    //reservar_vuelo();
-    //menu_cliente();
     menu();
     return 0;
 }

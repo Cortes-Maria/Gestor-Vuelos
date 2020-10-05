@@ -3,6 +3,11 @@
 //#include "conecta_mySQL.h"
 
 void consultar_reservacion(char idReserva[10]){
+    /*
+      Función encargada de consultar una reserva
+      E: un char con el código de la reserva
+      S: N/A
+    */
     MYSQL *conn = mysql_init(NULL);
 	MYSQL_RES *res;
 	MYSQL_ROW row;
@@ -32,6 +37,7 @@ void consultar_reservacion(char idReserva[10]){
         return;
 	}
     
+    //Se imprimen todos los clientes asociados a la reserva
     res = mysql_use_result(conn);
     row = mysql_fetch_row(res);
     int contador = 1;

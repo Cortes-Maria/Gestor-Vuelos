@@ -1,6 +1,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include "pdfgen.h"
+#include "pdfgen.c"
 
 struct cliente{
     char dato[50];
@@ -8,6 +10,12 @@ struct cliente{
 
 
 int validar_datos(char* dato, int id){
+    /*
+      Función que valida los datos de cada linea del archivo de carga de usuarios
+      E: el dato a validar y un entero indicando el tipo de dato que se va a validar
+      S: un entero indicando si el dato está bien o no
+      R: N/A
+    */
     char data[35];//Para guardar los datos en un arreglo para facilitar su iteración
     int i = 0;//Para recorrer cadenas
     switch (id)
@@ -49,7 +57,14 @@ int validar_datos(char* dato, int id){
 
 
 void generar_reporte(int linea, int ind, char nombre_archivo[50]){
-
+    /*
+      Función encargada de generar el reporte de la carga de usuarios
+      E: una línea entera el archivo
+         un indicador indicando si el registro fue insertado o no en la base
+         el nombre del archivo para generar el reporte
+      S: N/A
+      R: N/A
+    */
     FILE *archivo;
     archivo = fopen(nombre_archivo, "a");
     char linea_char[3];
@@ -125,6 +140,13 @@ int guardar_datos(char linea[80]){
 }
 
 void imprime_asientos(char idVuelo[4], MYSQL *conn){
+    /*
+      Función encargada de imprimir en la terminal
+      los asientos de un vuelo
+      E: el código del vuelo, una conexion a mysql
+      S: N/A
+      R: N/A
+    */
 
     MYSQL_RES *res;
     MYSQL_ROW row;
@@ -198,4 +220,167 @@ void imprime_asientos(char idVuelo[4], MYSQL *conn){
     printf("\n\n");
     mysql_free_result(res);
     mysql_close(conn);
+}
+
+void generar_PDF(char idReservacion[10]){
+    /*
+      Función que se encarga de generar un pdf y
+      guardar ahí los datos de la reserva
+      E: el código de la reservación
+      S: N/A
+      R: N/A
+    */
+    struct pdf_info info = {
+        .creator = "My software",
+        .producer = "My software",
+        .title = "Reservacion",
+        .author = "My name",
+        .subject = "My subject",
+        .date = "Today"};
+    struct pdf_doc *pdf = pdf_create(PDF_A4_WIDTH, PDF_A4_HEIGHT, &info);
+    pdf_set_font(pdf, "Times-Roman");
+    pdf_append_page(pdf);
+
+    char codigo[50] = "Codigo de la reservación: ";
+    strcat(codigo, idReservacion);
+    pdf_add_text(pdf, NULL, codigo, 12, 100, 750, PDF_BLACK);
+    char query[50] = "call obtenerReservacion(";
+    strcat(query, idReservacion);
+    strcat(query, ")");
+    MYSQL *conn = mysql_init(NULL);
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+    conn = conexion_mySQL();
+    char nombrePDF[50];
+    strcpy(nombrePDF, idReservacion);
+    strcat(nombrePDF, ".pdf");
+    if (mysql_query(conn, query)) {//Ejecuta la función de la base de datos
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        exit(1);
+    }
+
+    res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+
+    char nombreAerolinea[50] = "Aerolínea: ";
+    strcat(nombreAerolinea, row[7]);
+    strcat(nombreAerolinea, "; Número de hub: ");
+    strcat(nombreAerolinea, row[8]);
+
+    char fechaRes[40] = "Fecha de la reservación: ";
+    strcat(fechaRes, row[0]);
+
+    char idVuelo[35] = "Código de vuelo: ";
+    strcat(idVuelo, row[1]);
+
+    char ciudadSalida[50] = "Ciudad y fecha de salida: ";
+    strcat(ciudadSalida, row[2]);
+    strcat(ciudadSalida, " ");
+    strcat(ciudadSalida, row[3]);
+
+    char ciudadLlegada[50] = "Ciudad y fecha de llegada: ";
+    strcat(ciudadLlegada, row[4]);
+    strcat(ciudadLlegada, " ");
+    strcat(ciudadLlegada, row[5]);
+
+    char montoTotal[50] = "Monto total de la reservación: ";
+    strcat(montoTotal, row[6]);
+    strcat(montoTotal, " dólares");
+
+    char totalAsientos[30] = "Hay ";
+    strcat(totalAsientos, row[9]);
+    strcat(totalAsientos, " asientos reservados");
+
+    mysql_free_result(res);
+    mysql_close(conn);
+    pdf_add_text(pdf, NULL, nombreAerolinea, 12, 100, 730, PDF_BLACK);
+    pdf_add_text(pdf, NULL, fechaRes, 12, 100, 710, PDF_BLACK);
+    pdf_add_text(pdf, NULL, idVuelo, 12, 100, 690, PDF_BLACK);
+    pdf_add_text(pdf, NULL, ciudadSalida, 12, 100, 670, PDF_BLACK);
+    pdf_add_text(pdf, NULL, ciudadLlegada, 12, 100, 650, PDF_BLACK);
+    pdf_add_text(pdf, NULL, montoTotal, 12, 100, 630, PDF_BLACK);
+    pdf_add_text(pdf, NULL, totalAsientos, 12, 100, 610, PDF_BLACK);
+    pdf_add_text(pdf, NULL, "Clientes en esta reserva", 12, 100, 570, PDF_BLACK);
+    
+    strcpy(query, "call obtener_query_r(");
+    strcat(query, idReservacion);
+    strcat(query, ")");
+    conn = conexion_mySQL();
+
+    if (mysql_query(conn, query)) {
+        return;
+	}
+    res = mysql_use_result(conn);
+    row = mysql_fetch_row(res);
+    int posTexto = 550;
+
+    char nombreCopy[15] = "Nombre: ";
+    char nombre[100];
+
+    char pasaporteCopy[20] = "Pasaporte: ";
+    char pasaporte[30];
+
+    char edadCopy[15] = "Edad: ";
+    char edad[15];
+
+    char asientoCopy1[20] = "Asiento tipo ";
+    char asientoCopy2[20] = " ubicado en la fila ";
+    char asientoCopy3[20] = " y columna ";
+    char asiento[100];
+
+    char precioCopy[25] = "Precio del boleto ";
+    char precioCopy2[15] = " dólares";
+    char precio[50];
+
+    while (row != NULL){
+        //Nombre completo
+        strcpy(nombre, nombreCopy);
+        strcat(nombre, row[1]);
+        strcat(nombre, " ");
+        strcat(nombre, row[2]);
+        strcat(nombre, " ");
+        strcat(nombre, row[3]);
+        printf("Nombre: %s\n", nombre);
+        pdf_add_text(pdf, NULL, nombre, 12, 100, posTexto, PDF_BLACK);
+        posTexto -= 15;
+
+        //Pasaporte
+        strcpy(pasaporte, pasaporteCopy);
+        strcat(pasaporte, row[4]);
+        printf("Pasaporte: %s\n", pasaporte);
+        pdf_add_text(pdf, NULL, pasaporte, 12, 100, posTexto, PDF_BLACK);
+        posTexto -= 15;
+
+        //Edad
+        strcpy(edad, edadCopy);
+        strcat(edad, row[9]);
+        printf("Edad: %s\n", edad);
+        pdf_add_text(pdf, NULL, edad, 12, 100, posTexto, PDF_BLACK);
+        posTexto -= 15;
+
+        //TipoAsiento
+        strcpy(asiento, asientoCopy1);
+        strcat(asiento, row[5]);
+        strcat(asiento, asientoCopy2);
+        strcat(asiento, row[6]);
+        strcat(asiento, asientoCopy3);
+        strcat(asiento, row[7]);
+        printf("Asiento: %s\n", asiento);
+        pdf_add_text(pdf, NULL, asiento, 12, 100, posTexto, PDF_BLACK);
+        posTexto -= 15;
+
+        //Monto
+        strcpy(precio, precioCopy);
+        strcat(precio, row[8]);
+        strcat(precio, precioCopy2);
+        printf("Precio: %s\n\n\n", precio);
+        pdf_add_text(pdf, NULL, precio, 12, 100, posTexto, PDF_BLACK);
+
+        row = mysql_fetch_row(res);
+        posTexto -= 30;
+    }
+
+    pdf_save(pdf, nombrePDF);
+    pdf_destroy(pdf);
+
 }

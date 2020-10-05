@@ -130,7 +130,6 @@ INSERT INTO Reserva (fkCliente, fkVuelo, fecha) VALUES (274628, 1, '2020-09-03 1
 INSERT INTO ClienteXReserva VALUES (2, 274628, 6);
 INSERT INTO ClienteXReserva VALUES (2, 9233715, 7);
 INSERT INTO ClienteXReserva VALUES (2, 315391, 33);
-select * from ClienteXReserva;
 update Asiento SET Estado = 'O' where pkAsiento = 6;
 update Asiento SET Estado = 'O' where pkAsiento = 7;
 
@@ -164,3 +163,4 @@ insert into Asiento (fkVuelo, Tipo, Fila, Columna, Estado)
     
 -- RESERVAS SE HACEN POR CONSOLA
 
+INSERT INTO Aerolinea VALUES('Sky Airline', 22);
