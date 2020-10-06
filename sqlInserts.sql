@@ -65,18 +65,18 @@ values ('ERJ 145', 3);
 insert into Cliente(pkCliente, Nombre, Apellido1, Apellido2, Sexo, FechaNacimiento, Edad)
 values (274628, 'Ignacio', 'Carrera', 'Rodriguez', 'M', '1980-05-22', 'A');
 insert into CuentaCliente(fkCliente, Usuario, Contrasenna)
-values (274628, 'Igcaro', 1234);
+values (274628, 'Igcaro', MD5(1234));
 
 insert into Cliente(pkCliente, Nombre, Apellido1, Apellido2, Sexo, FechaNacimiento, Edad)
 values (182959, 'Daniela', 'Montenegro', 'Sanabria', 'F', '1977-02-10', 'A');
 insert into CuentaCliente(fkCliente, Usuario, Contrasenna)
-values (182959, 'DaniM', 12345);
+values (182959, 'DaniM', MD5(12345));
 
 insert into Cliente(pkCliente, Nombre, Apellido1, Apellido2, Sexo, FechaNacimiento, Edad)
 values (315391, 'María', 'Solorzano', 'Fernandez', 'M', '2018-12-11', 'I');
 -- Operario
 insert into Operario (pkOperario, Usuario, Contrasenna)
-values (312, 'mainAdmin', 4321);
+values (312, 'mainAdmin', MD5(4321));
 
 
 

@@ -8,7 +8,7 @@
 
 int main()
 {
-    menu();
+    menu_admin();
     return 0;
 }
 
